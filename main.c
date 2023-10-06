@@ -59,6 +59,12 @@ int main(void)
 
 		input[read_bytes - 1] = '\0';
 
+		if (strlen(input) == 0)
+		{
+			printf("\n");
+			continue;
+		}
+
 		if (strcmp(input, "exit") == 0)
 		{
 			printf("\n");
@@ -69,13 +75,12 @@ int main(void)
 
 		handle_shell_cmds(words);
 
-		for (x = 0; words[x] != NULL; x++)
-			printf("x%d : %s\n", x, words[x]);
-
+		free(input);
 		input = NULL;
 		free_words(words);
 	}
 
-	free(words);
+	free(input);
+	free_words(words);
 	return (0);
 }

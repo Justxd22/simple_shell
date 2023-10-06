@@ -31,11 +31,5 @@ char **split_string_to_words(char *string, char *separator)
  */
 void free_words(char **words)
 {
-	int x;
-
-	for (x = 0; words[x] != NULL; x++)
-	{
-		free(words[x]);
-	}
 	free(words);
 }
