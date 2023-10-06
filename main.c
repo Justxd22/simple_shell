@@ -65,7 +65,7 @@ int main(void)
 			break;
 		}
 
-		words = split_string(input, separator);
+		words = split_string_to_words(input, separator);
 
 		handle_shell_cmds(words);
 
