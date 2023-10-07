@@ -1,86 +1,61 @@
 #include "shell.h"
 
-
 /**
- * handle_shell_cmds - takes cmds and execute them
- * @words: commands + their args to execute
- * No Return
+ *interactive_mode-function that interacte directly with the user
+ @argc: is the number of arguments
+ @argv: is an array of arguments
  */
-void handle_shell_cmds(char **words)
-{
-	int status;
-	pid_t pid = fork();
+int interactive_mode() {
+    char *line;
+    int status;
 
-	if (pid == -1)
-	{
-		printf("ERROR FORK\n");
-		exit(100);
-	}
-	else if (pid == 0)
-	{
-		if (execvp(words[0], words) == -1)
-		{
-			printf("Not a COmmand?? %s\n", words[0]);
-			//exit(99);
-		}
-	}
-	else
-	{
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			printf("Error Child\n");
-			exit(101);
-		}
-	}
+    while (1) {
+        printf("($)");
+        line = read_the_given_line(); // Function to read the given input
+        if (line == NULL)
+            break;
+        status = process_the_given_input(line); // Function to process, parse, and execute given input
+        free(line);
+    }
+    return 0;
 }
 
 /**
- * main - main func for the simple shell
- * Return: 0
+ *non_interactive_mode-function that interacts with commands
+ @argc: is the number of arguments
+ @argv: is an array of arguments
  */
-int main(void)
-{
-	size_t input_size = 0, read_bytes;
-	char *separator = " ", *input = NULL, **words;
-	int x = 0;
+int non_interactive_mode(int argc, char *argv[]) {
+    char *line;
+    int status;
 
-	while (1)
-	{
-		printf("#cisfun$ ");
-		fflush(stdout);
+    if (argc > 1) {
+        FILE *script = fopen(argv[1], "r");
+        if (script == NULL) {
+            perror("Error opening file");
+            return EXIT_FAILURE;
+        }
 
-		read_bytes = getline(&input, &input_size, stdin);
+        while ((line = read_the_given_input(script)) != NULL) {
+            status = process_the_given_input(line);
+            free(line);
+        }
+        fclose(script);
+    }
+    return 0;
+}
 
-		if (read_bytes == -1)
-		{
-			printf("\n");
-			break;
-		}
-
-		input[read_bytes - 1] = '\0';
-
-		if (strlen(input) == 0)
-		{
-			printf("\n");
-			continue;
-		}
-
-		if (strcmp(input, "exit") == 0)
-		{
-			printf("\n");
-			break;
-		}
-
-		words = split_string_to_words(input, separator);
-
-		handle_shell_cmds(words);
-
-		free(input);
-		input = NULL;
-		free_words(words);
-	}
-
-	free(input);
-	free_words(words);
-	return (0);
+/**
+ *main-it's the main function
+ @argc: is the number of arguments
+ @argv: is an array of arguments
+ */
+int main(int argc, char *argv[]) {
+    if (argc == 1) {
+        // Interactive mode
+        return interactive_mode();
+    } else {
+        // Non-interactive mode
+        return non_interactive_mode(argc, argv);
+    }
 }
