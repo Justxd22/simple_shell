@@ -38,11 +38,11 @@ void handle_shell_cmds(char **words, char *argv[])
  * @argv: array of args
  * Return: 0
  */
-int main(int argc, char *argv[])
+int main(__attribute__((unused))int argc, char *argv[])
 {
-	size_t input_size = 0, read_bytes;
+	size_t input_size = 0;
+	ssize_t read_bytes;
 	char *separator = " ", *input = NULL, **words = NULL;
-	int x = 0;
 
 	while (1)
 	{
