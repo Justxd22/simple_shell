@@ -4,9 +4,10 @@
 /**
  * handle_shell_cmds - takes cmds and execute them
  * @words: commands + their args to execute
+ * @argv: argv to get program name
  * No Return
  */
-void handle_shell_cmds(char **words)
+void handle_shell_cmds(char **words, char *argv[])
 {
 	int status;
 	pid_t pid = fork();
@@ -19,10 +20,7 @@ void handle_shell_cmds(char **words)
 	else if (pid == 0)
 	{
 		if (execvp(words[0], words) == -1)
-		{
-			printf("Not a COmmand?? %s\n", words[0]);
-			//exit(99);
-		}
+			printf("%s: No such file or directory\n", argv[0]);
 	}
 	else
 	{
@@ -36,51 +34,46 @@ void handle_shell_cmds(char **words)
 
 /**
  * main - main func for the simple shell
+ * @argc: args count
+ * @argv: array of args
  * Return: 0
  */
-int main(void)
+int main(int argc, char *argv[])
 {
 	size_t input_size = 0, read_bytes;
-	char *separator = " ", *input = NULL, **words;
+	char *separator = " ", *input = NULL, **words = NULL;
 	int x = 0;
 
 	while (1)
 	{
-		printf("#cisfun$ ");
+		if (isatty(STDIN_FILENO))
+			printf("#cisfun$ ");
 		fflush(stdout);
 
 		read_bytes = getline(&input, &input_size, stdin);
 
 		if (read_bytes == -1)
 		{
-			printf("\n");
+			if (isatty(STDIN_FILENO))
+				printf("\n");
 			break;
 		}
 
 		input[read_bytes - 1] = '\0';
 
 		if (strlen(input) == 0)
-		{
-			printf("\n");
 			continue;
-		}
 
 		if (strcmp(input, "exit") == 0)
-		{
-			printf("\n");
 			break;
-		}
 
 		words = split_string_to_words(input, separator);
 
-		handle_shell_cmds(words);
-
-		free(input);
-		input = NULL;
-		free_words(words);
+		handle_shell_cmds(words, argv);
+		free(input), free(words);
+		input = NULL, words = NULL;
 	}
 
-	free(input);
-	free_words(words);
+	free(input), free(words);
 	return (0);
 }
