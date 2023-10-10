@@ -10,6 +10,7 @@
 #define MAX_INPUT_SIZE 1024
 #define MAX_WORDS 100
 
+extern char **environ;
 char **split_string_to_words(char *string, char *separator);
 void free_words(char **words);
 
