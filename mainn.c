@@ -71,6 +71,17 @@ int main(__attribute__((unused))int argc, char *argv[])
 		fflush(stdout);
 
 		read_bytes = getline(&input, &input_size, stdin);
+		
+		if(strcmp(input, "env") == 0)
+		{
+			char *envar = *environ;
+			while(envar)
+			{
+				printf("%s", envar);
+				envar =*(environ++);
+			}
+			continue;
+		}
 
 		if (read_bytes == -1)
 		{
