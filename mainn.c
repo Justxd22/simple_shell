@@ -11,7 +11,7 @@ void handle_shell_cmds(char **words, char *argv[])
 {
 	char *command = words[0];
 	char *path = getenv("PATH");
-	char * token = strtok(path, ":");
+	char *token = strtok(path, ":");
 	char path_command[MAX_WORDS];
 
 	if( path == NULL)
@@ -21,9 +21,9 @@ void handle_shell_cmds(char **words, char *argv[])
 
 	while(token != NULL)
 	{
-		sprintf(path_command,%s%s, token, command);
+		sprintf(path_command, "%s%s", token, command);
 
-		if((path_command, X_OK) == 0)
+		if(access(path_command, X_OK) == 0)
 		{		
 			int status;
 			pid_t pid = fork();
@@ -90,10 +90,14 @@ int main(__attribute__((unused))int argc, char *argv[])
 		words = split_string_to_words(input, separator);
 
 		handle_shell_cmds(words, argv);
-		free(input), free(words);
-		input = NULL, words = NULL;
+		free(input);
+	       	free(words);
+		input = NULL;
+	       	words = NULL;
 	}
 
-	free(input), free(words);
+	free(input);
+       	free(words);
 	return (0);
+	}
 }
