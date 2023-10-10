@@ -19,9 +19,9 @@ void handle_shell_cmds(char **words, char *argv[])
 		printf("PATH envirenemment variable not set\n");
 	}
 
-	while(token =! NULL)
+	while(token != NULL)
 	{
-		sprintf(path_command, %s%s, token, command);
+		sprintf(path_command,%s%s, token, command);
 
 		if((path_command, X_OK) == 0)
 		{		
