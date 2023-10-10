@@ -9,28 +9,48 @@
  */
 void handle_shell_cmds(char **words, char *argv[])
 {
-	int status;
-	pid_t pid = fork();
+	char *command = words[0];
+	char *path = getenv("PATH");
+	char * token = strtok(path, ":");
+	char path_command[MAX_WORDS];
 
-	if (pid == -1)
+	if( path == NULL)
 	{
-		printf("ERROR FORK\n");
-		exit(100);
+		printf("PATH envirenemment variable not set\n");
 	}
-	else if (pid == 0)
+
+	while(token =! NULL)
 	{
-		if (execvp(words[0], words) == -1)
-			printf("%s: No such file or directory\n", argv[0]);
-	}
-	else
-	{
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			printf("Error Child\n");
-			exit(101);
+		sprintf(path_command, %s%s, token, command);
+
+		if((path_command, X_OK) == 0)
+		{		
+			int status;
+			pid_t pid = fork();
+	
+			if (pid == -1)
+			{
+				printf("ERROR FORK\n");
+				exit(100);
+			}
+			else if (pid == 0)
+			{
+				if (execvp(words[0], words) == -1)
+					printf("%s: No such file or directory\n", argv[0]);
+			}
+			else
+			{
+				if (waitpid(pid, &status, 0) == -1)
+				{
+					printf("Error Child\n");
+					exit(101);
+				}
+			}
 		}
+		path = NULL;
 	}
-}
+	printf("Command not found: %s\n", command);
+
 
 /**
  * main - main func for the simple shell
