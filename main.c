@@ -74,7 +74,7 @@ int main(__attribute__((unused))int argc, char *argv[])
 {
 	size_t input_size = 0;
 	ssize_t read_bytes;
-	char *separator = " ", *input = NULL, **words = NULL, *envar;
+	char *separator = " ", *input = NULL, **words = NULL;
 	int o = 0;
 
 	while (1)
