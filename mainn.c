@@ -5,29 +5,25 @@
  * handle_shell_cmds - takes cmds and execute them
  * @words: commands + their args to execute
  * @argv: argv to get program name
- * No Return
+ * Return: exit code
  */
-void handle_shell_cmds(char **words, char *argv[])
+int handle_shell_cmds(char **words, char *argv[])
 {
-	char *command = words[0];
-	char *path = getenv("PATH");
-	char *token = strtok(path, ":");
+	char *command = words[0], *path = getenv("PATH"), *token = strtok(path, ":");
 	char path_command[MAX_WORDS];
+	int status;
+	pid_t pid;
 
-	if( path == NULL)
+	if (path == NULL)
+		printf("PATH environment variable not set\n");
+
+	while (token != NULL)
 	{
-		printf("PATH envirenemment variable not set\n");
-	}
+		sprintf(path_command, "%s/%s", token, command);
+		if (access(path_command, X_OK) == 0)
+		{
+			pid = fork();
 
-	while(token != NULL)
-	{
-		sprintf(path_command, "%s%s", token, command);
-
-		if(access(path_command, X_OK) == 0)
-		{		
-			int status;
-			pid_t pid = fork();
-	
 			if (pid == -1)
 			{
 				printf("ERROR FORK\n");
@@ -36,7 +32,7 @@ void handle_shell_cmds(char **words, char *argv[])
 			else if (pid == 0)
 			{
 				if (execvp(words[0], words) == -1)
-					printf("%s: No such file or directory\n", argv[0]);
+					break;
 			}
 			else
 			{
@@ -45,12 +41,28 @@ void handle_shell_cmds(char **words, char *argv[])
 					printf("Error Child\n");
 					exit(101);
 				}
+				if (WIFEXITED(status))
+					return (WEXITSTATUS(status));
 			}
 		}
-		path = NULL;
+		token = strtok(NULL, ":");
 	}
-	printf("Command not found: %s\n", command);
+	printf("%s: No such file or directory\n", argv[0]);
+	return (-1);
+}
 
+
+/**
+ * print_env - print all env
+ * no Return
+ */
+void print_env(void)
+{
+	char *envar = *environ;
+
+	while (envar)
+		printf("%s", envar), envar = *(environ++);
+}
 
 /**
  * main - main func for the simple shell
@@ -62,27 +74,19 @@ int main(__attribute__((unused))int argc, char *argv[])
 {
 	size_t input_size = 0;
 	ssize_t read_bytes;
-	char *separator = " ", *input = NULL, **words = NULL;
+	char *separator = " ", *input = NULL, **words = NULL, *envar;
+	int o = 0;
 
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 			printf("#cisfun$ ");
-		fflush(stdout);
-
-		read_bytes = getline(&input, &input_size, stdin);
-		
-		if(strcmp(input, "env") == 0)
+		fflush(stdout), read_bytes = getline(&input, &input_size, stdin);
+		if (strcmp(input, "env") == 0)
 		{
-			char *envar = *environ;
-			while(envar)
-			{
-				printf("%s", envar);
-				envar =*(environ++);
-			}
+			print_env();
 			continue;
 		}
-
 		if (read_bytes == -1)
 		{
 			if (isatty(STDIN_FILENO))
@@ -91,24 +95,21 @@ int main(__attribute__((unused))int argc, char *argv[])
 		}
 
 		input[read_bytes - 1] = '\0';
-
 		if (strlen(input) == 0)
 			continue;
 
-		if (strcmp(input, "exit") == 0)
-			break;
-
 		words = split_string_to_words(input, separator);
+		if (strcmp(words[0], "exit") == 0)
+		{
+			if (words[1])
+				o = atoi(words[1]);
+			break;
+		}
 
-		handle_shell_cmds(words, argv);
-		free(input);
-	       	free(words);
-		input = NULL;
-	       	words = NULL;
+		o = handle_shell_cmds(words, argv);
+		free(input), input = NULL, free(words), words = NULL;
 	}
 
-	free(input);
-       	free(words);
-	return (0);
-	}
+	free(input), free(words);
+	return (o);
 }
