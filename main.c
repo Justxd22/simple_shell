@@ -20,7 +20,8 @@ int handle_shell_cmds(char **words, char *argv[], char *path)
 
 	while (token != NULL)
 	{
-		sprintf(path_command, "%s/%s", token, words[0]);
+		sprintf(path_command, "%s%s%s", strchr(words[0], '/') == NULL ? token : "",
+strchr(words[0], '/') == NULL ? "/" : "", words[0]);
 		if (access(path_command, X_OK) == 0)
 		{
 			pid = fork();
