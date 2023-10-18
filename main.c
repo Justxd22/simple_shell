@@ -5,6 +5,7 @@
  * handle_shell_cmds - takes cmds and execute them
  * @words: commands + their args to execute
  * @argv: argv to get program name
+ * @path: sys path from env
  * Return: exit code
  */
 int handle_shell_cmds(char **words, char *argv[], char *path)
@@ -73,7 +74,8 @@ int main(__attribute__((unused))int argc, char *argv[])
 {
 	size_t input_size = 0;
 	ssize_t read_bytes;
-	char *separator = " ", *input = NULL, **words = NULL, *orip = getenv("PATH"), *path;
+	char *separator = " ", *input = NULL, **words = NULL, *orip = getenv("PATH"),
+*path = strdup(orip);
 	int o = 0;
 
 	while (1)
