@@ -7,9 +7,9 @@
  * @argv: argv to get program name
  * Return: exit code
  */
-int handle_shell_cmds(char **words, char *argv[])
+int handle_shell_cmds(char **words, char *argv[], char *path)
 {
-	char *command = words[0], *path = getenv("PATH"), *token = strtok(path, ":");
+	char *token = strtok(path, ":");
 	char path_command[MAX_WORDS];
 	int status;
 	pid_t pid;
@@ -19,11 +19,10 @@ int handle_shell_cmds(char **words, char *argv[])
 
 	while (token != NULL)
 	{
-		sprintf(path_command, "%s/%s", token, command);
+		sprintf(path_command, "%s/%s", token, words[0]);
 		if (access(path_command, X_OK) == 0)
 		{
 			pid = fork();
-
 			if (pid == -1)
 			{
 				printf("ERROR FORK\n");
@@ -31,7 +30,7 @@ int handle_shell_cmds(char **words, char *argv[])
 			}
 			else if (pid == 0)
 			{
-				if (execvp(words[0], words) == -1)
+				if (execvp(path_command, words) == -1)
 					break;
 			}
 			else
@@ -74,7 +73,7 @@ int main(__attribute__((unused))int argc, char *argv[])
 {
 	size_t input_size = 0;
 	ssize_t read_bytes;
-	char *separator = " ", *input = NULL, **words = NULL;
+	char *separator = " ", *input = NULL, **words = NULL, *orip = getenv("PATH"), *path;
 	int o = 0;
 
 	while (1)
@@ -105,11 +104,10 @@ int main(__attribute__((unused))int argc, char *argv[])
 				o = atoi(words[1]);
 			break;
 		}
-
-		o = handle_shell_cmds(words, argv);
+		free(path), path = strdup(orip), o = handle_shell_cmds(words, argv, path);
 		free(input), input = NULL, free(words), words = NULL;
 	}
 
-	free(input), free(words);
+	free(input), free(words), free(path);
 	return (o);
 }
