@@ -100,6 +100,8 @@ int main(__attribute__((unused))int argc, char *argv[])
 			continue;
 		}
 		words = split_string_to_words(input, separator);
+		if (words[0] == NULL)
+			break;
 		if (strcmp(words[0], "exit") == 0)
 		{
 			if (words[1])
