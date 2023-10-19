@@ -48,8 +48,8 @@ strchr(words[0], '/') == NULL ? "/" : "", words[0]);
 		}
 		token = strtok(NULL, ":");
 	}
-	printf("%s: No such file or directory\n", argv[0]);
-	return (-1);
+	fprintf(stderr, "%s: 1: %s: not found\n", argv[0], words[0]);
+	return (127);
 }
 
 
@@ -62,7 +62,7 @@ void print_env(void)
 	char *envar = *environ;
 
 	while (envar)
-		printf("%s", envar), envar = *(environ++);
+		printf("%s\n", envar), envar = *(environ++);
 }
 
 /**
@@ -84,7 +84,7 @@ int main(__attribute__((unused))int argc, char *argv[])
 		if (isatty(STDIN_FILENO))
 			printf("#cisfun$ ");
 		fflush(stdout), read_bytes = getline(&input, &input_size, stdin);
-		if (read_bytes == -1)
+		if (read_bytes <= 0)
 		{
 			if (isatty(STDIN_FILENO))
 				printf("\n");
