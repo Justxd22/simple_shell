@@ -84,11 +84,6 @@ int main(__attribute__((unused))int argc, char *argv[])
 		if (isatty(STDIN_FILENO))
 			printf("#cisfun$ ");
 		fflush(stdout), read_bytes = getline(&input, &input_size, stdin);
-		if (strcmp(input, "env") == 0)
-		{
-			print_env();
-			continue;
-		}
 		if (read_bytes == -1)
 		{
 			if (isatty(STDIN_FILENO))
@@ -99,7 +94,11 @@ int main(__attribute__((unused))int argc, char *argv[])
 		input[read_bytes - 1] = '\0';
 		if (strlen(input) == 0)
 			continue;
-
+		if (strcmp(input, "env") == 0)
+		{
+			print_env();
+			continue;
+		}
 		words = split_string_to_words(input, separator);
 		if (strcmp(words[0], "exit") == 0)
 		{
