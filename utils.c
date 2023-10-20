@@ -45,15 +45,10 @@ int exit_code(char **words, char *argv[])
 {
 	int code = atoi(words[1]);
 
-	if (!code)
+	if (code <= 0)
 	{
-		printf("%s: 1: exit: Illegal number: %s\n", argv[0], words[1]);
-		return (37);
-	}
-	else if (code < 0)
-	{
-		printf("%s: 1: exit: Illegal number: %s\n", argv[0], words[1]);
-		return (36);
+		fprintf(stderr, "%s: 1: exit: Illegal number: %s\n", argv[0], words[1]);
+		return (2);
 	}
 	else
 		return (code);
