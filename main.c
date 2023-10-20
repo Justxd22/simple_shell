@@ -101,7 +101,7 @@ int main(__attribute__((unused))int argc, char *argv[])
 		if (strcmp(words[0], "exit") == 0)
 		{
 			if (words[1])
-				o = atoi(words[1]);
+				o = exit_code(words, argv);
 			break;
 		}
 		free(path), path = strdup(orip), o = handle_shell_cmds(words, argv, path);
