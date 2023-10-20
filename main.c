@@ -15,9 +15,6 @@ int handle_shell_cmds(char **words, char *argv[], char *path)
 	int status;
 	pid_t pid;
 
-	if (path == NULL)
-		printf("PATH environment variable not set\n");
-
 	while (token != NULL)
 	{
 		sprintf(path_command, "%s%s%s", strchr(words[0], '/') == NULL ? token : "",
@@ -59,10 +56,10 @@ strchr(words[0], '/') == NULL ? "/" : "", words[0]);
  */
 void print_env(void)
 {
-	char *envar = *environ;
+	char **envar = environ;
 
-	while (envar)
-		printf("%s\n", envar), envar = *(environ++);
+	while (*envar)
+		printf("%s\n", *envar), envar++;
 }
 
 /**
@@ -75,8 +72,8 @@ int main(__attribute__((unused))int argc, char *argv[])
 {
 	size_t input_size = 0;
 	ssize_t read_bytes;
-	char *separator = " ", *input = NULL, **words = NULL, *orip = getenv("PATH"),
-*path = strdup(orip);
+	char *separator = " ", *input = NULL, **words = NULL,
+*orip = (getenv("PATH")) ? getenv("PATH") : "", *path = strdup(orip);
 	int o = 0;
 
 	while (1)
@@ -90,7 +87,6 @@ int main(__attribute__((unused))int argc, char *argv[])
 				printf("\n");
 			break;
 		}
-
 		input[read_bytes - 1] = '\0';
 		if (strlen(input) == 0)
 			continue;
@@ -111,7 +107,6 @@ int main(__attribute__((unused))int argc, char *argv[])
 		free(path), path = strdup(orip), o = handle_shell_cmds(words, argv, path);
 		free(input), input = NULL, free(words), words = NULL;
 	}
-
 	free(input), free(words), free(path);
 	return (o);
 }
