@@ -12,6 +12,7 @@
 
 extern char **environ;
 char **split_string_to_words(char *string, char *separator);
+int exit_code(char **words, char *argv[]);
 void free_words(char **words);
 
 #endif
