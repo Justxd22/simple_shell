@@ -33,3 +33,28 @@ void free_words(char **words)
 {
 	free(words);
 }
+
+
+/**
+ * exit_code - figure out exit code
+ * @words: contains words + exit
+ * @argv: to get program name
+ * Return: code 36/37/0/{custom}
+ */
+int exit_code(char **words, char *argv[])
+{
+	int code = atoi(words[1]);
+
+	if (!code)
+	{
+		printf("%s: 1: exit: Illegal number: %s\n", argv[0], words[1]);
+		return (37);
+	}
+	else if (code < 0)
+	{
+		printf("%s: 1: exit: Illegal number: %s\n", argv[0], words[1]);
+		return (36);
+	}
+	else
+		return (code);
+}
