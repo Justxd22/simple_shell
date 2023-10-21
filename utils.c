@@ -15,6 +15,12 @@ char **split_string_to_words(char *string, char *separator)
 	token = strtok(string, separator);
 	while (token != NULL)
 	{
+		if (strchr(token, '#') != NULL)
+		{
+			if (num_words == 0)
+				words[num_words++] = "#";
+			break;
+		}
 		words[num_words++] = token;
 		token = strtok(NULL, separator);
 	}
