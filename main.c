@@ -70,8 +70,7 @@ void print_env(void)
  */
 int main(__attribute__((unused))int argc, char *argv[])
 {
-	size_t input_size = 0;
-	ssize_t read_bytes;
+	size_t read_bytes, input_size = 0;
 	char *separator = " ", *input = NULL, **words = NULL,
 *orip = (getenv("PATH")) ? getenv("PATH") : "", *path = strdup(orip);
 	int o = 0;
@@ -98,6 +97,8 @@ int main(__attribute__((unused))int argc, char *argv[])
 		words = split_string_to_words(input, separator);
 		if (words[0] == NULL)
 			break;
+		if (strcmp(words[0], "#") == 0)
+			continue;
 		if (strcmp(words[0], "exit") == 0)
 		{
 			if (words[1])
