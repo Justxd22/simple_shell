@@ -10,7 +10,7 @@ char **split_string_to_words(char *string, char *separator)
 {
 	char **words = malloc(sizeof(char *) * MAX_WORDS);
 	char *token;
-	int num_words = 0, x;
+	int num_words = 0;
 
 	token = strtok(string, separator);
 	while (token != NULL)
