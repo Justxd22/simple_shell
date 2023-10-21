@@ -70,10 +70,10 @@ void print_env(void)
  */
 int main(__attribute__((unused))int argc, char *argv[])
 {
-	size_t read_bytes, input_size = 0;
+	size_t input_size = 0, o = 0;
+	ssize_t read_bytes;
 	char *separator = " ", *input = NULL, **words = NULL,
 *orip = (getenv("PATH")) ? getenv("PATH") : "", *path = strdup(orip);
-	int o = 0;
 
 	while (1)
 	{
